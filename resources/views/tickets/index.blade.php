@@ -7,32 +7,54 @@
         <title>Ticket Dashboard</title>
     </head>
     <body>
+        <div class="container mt-3">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom border-dark" style="background-color: #e3f2fd;" data-bs-theme="light">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="{{ route('tickets.index') }}">Tickets</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('tickets.create') }}">Create</a>
+                            </li>
+                        </ul>
+                        <form class="d-flex" role="search">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </div>
         <div class="container mt-5 center-text">
             <h1>Tickets</h1>
-            <div class="mt-3">
+            {{-- <div class="mt-3">
                 <a href="{{ route('tickets.create') }}" class="btn btn-light">Create Ticket</a>
-            </div>
+            </div> --}}
             <div class="mt-5">
-                <table class="table">
+                <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col">No</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">priority</th>
-                            <th scope="col" colspan="3">action</th>
+                            <th style="text-align:center" scope="col">No</th>
+                            <th style="text-align:center" scope="col">Title</th>
+                            <th style="text-align:center" scope="col">Status</th>
+                            <th style="text-align:center" scope="col">Priority</th>
+                            <th style="text-align:center" scope="col" colspan="3" >Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @php $i=1 @endphp
                         @foreach ( $tickets as $ticket )
-                        
                     <tr>
                         <td>{{ $i++ }}</td>
                         <td>{{ $ticket->title }}</td>
                         <td>{{ ucwords(str_replace('_', ' ', $ticket->status)) }}</td>
                         <td>{{ ucwords($ticket->priority) }}</td>
-                        <td><a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-primary">View</td>
+                        <td><a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-primary" >View</td>
                         <td><a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-secondary">Edit</td>
                         <td>
                             <!-- Trigger modal -->
@@ -66,7 +88,29 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>    
+            </div>
+            <div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class= "page-item active" aria-current="page">
+                            <span class="page-link">1 <span class="visually-hidden">(current)</span></span>
+                        </li>
+                        {{-- <li class="page-item"><a class="page-link" href="#">1</a></li> --}}
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>

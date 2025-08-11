@@ -7,6 +7,25 @@
         <title>Edit Ticket</title>
     </head>
     <body>
+        <div class="container mt-3">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="{{ route('tickets.index') }}">Tickets</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('tickets.create') }}">Create</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
         <div class="container mt-5">
             <h1>Edit Ticket</h1>
             <form action="{{ route('tickets.update', $ticket->id) }}" method="POST">
@@ -23,12 +42,11 @@
                 <div class="mb-3">
                     <label for="priority">Priority</label>
                     <select class="form-select" id="priority" name="priority" required>
-                        <option value="low" {{ old('priority', $ticket->priority) == 'low' ? 'selected' : '' }}>Low</option>
+                        <option value="low" {{ old('priority', $ticket->priority) == 'low' ? 'selected' : '' }}>Low</option> <!--ternary operator to check if the old value matches expression1 correct, return expression2. If false, return expression3-->
                         <option value="medium" {{ old('priority', $ticket->priority) == 'medium' ? 'selected' : '' }}>Medium</option>
                         <option value="high" {{ old('priority', $ticket->priority) == 'high' ? 'selected' : '' }}>High</option>
                     </select>
                 </div>
-
                 <div class="mb-3">
                     <label for="status">Status</label>
                     <select class="form-select" id="status" name="status" required>
