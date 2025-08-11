@@ -8,7 +8,7 @@
     </head>
     <body>
         <div class="container mt-5 center-text">
-            <h1>Ticket Dashboard</h1>
+            <h1>Tickets</h1>
             <div class="mt-3">
                 <a href="{{ route('tickets.create') }}" class="btn btn-light">Create Ticket</a>
             </div>
