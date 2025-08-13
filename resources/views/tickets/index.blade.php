@@ -91,7 +91,7 @@
             <div class="d-flex justify-content-center">
                 {{ $tickets->links() }}
             </div>
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center small text-muted">
                 Showing {{ $tickets->firstItem() }} to {{ $tickets->lastItem() }} of {{ $tickets->total() }} results
             </div>
         </div>
