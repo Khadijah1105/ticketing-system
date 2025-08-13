@@ -22,16 +22,13 @@
                                 <a class="nav-link" href="{{ route('tickets.create') }}">Create</a>
                             </li>
                         </ul>
-                        <form class="d-flex" role="search">
+                        {{-- <form class="d-flex" role="search">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
                             <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
+                        </form> --}}
                     </div>
                 </div>
             </nav>
-        </div>
-        <div class="d-flex justify-content-right">
-            Showing {{ $tickets->firstItem() }} to {{ $tickets->lastItem() }} of {{ $tickets->total() }} results
         </div>
         <div class="container mt-5 center-text">
             <h1>Tickets</h1>
@@ -93,6 +90,9 @@
             </div>
             <div class="d-flex justify-content-center">
                 {{ $tickets->links() }}
+            </div>
+            <div class="d-flex justify-content-center">
+                Showing {{ $tickets->firstItem() }} to {{ $tickets->lastItem() }} of {{ $tickets->total() }} results
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
