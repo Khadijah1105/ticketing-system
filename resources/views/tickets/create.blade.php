@@ -8,7 +8,7 @@
     </head>
     <body>
         <div class="container mt-3">
-            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom border-dark" style="background-color: #e3f2fd;" data-bs-theme="light">
                 <div class="container-fluid">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -17,9 +17,6 @@
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="{{ route('tickets.index') }}">Tickets</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('tickets.create') }}">Create</a>
                             </li>
                         </ul>
                     </div>
@@ -54,7 +51,7 @@
                         <option value="closed">Closed</option>
                     </select>
                 </div>
-                <button type="submit">Submit</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </body>

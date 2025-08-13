@@ -30,6 +30,9 @@
                 </div>
             </nav>
         </div>
+        <div class="d-flex justify-content-right">
+            Showing {{ $tickets->firstItem() }} to {{ $tickets->lastItem() }} of {{ $tickets->total() }} results
+        </div>
         <div class="container mt-5 center-text">
             <h1>Tickets</h1>
             {{-- <div class="mt-3">
@@ -47,69 +50,49 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $i=1 @endphp
-                        @foreach ( $tickets as $ticket )
-                    <tr>
-                        <td>{{ $i++ }}</td>
-                        <td>{{ $ticket->title }}</td>
-                        <td>{{ ucwords(str_replace('_', ' ', $ticket->status)) }}</td>
-                        <td>{{ ucwords($ticket->priority) }}</td>
-                        <td><a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-primary" >View</td>
-                        <td><a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-secondary">Edit</td>
-                        <td>
-                            <!-- Trigger modal -->
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $ticket->id }}">
-                                Delete
-                            </button>
-                            <!-- Modal -->
-                            <div class="modal fade" id="deleteModal{{ $ticket->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $ticket->id }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="deleteModalLabel{{ $ticket->id }}">Delete Ticket</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Are you sure you want to delete this ticket?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-danger">Delete</button>
-                                            </form>
+                        @foreach ($tickets as $index => $ticket)
+                        <tr>
+                            <td>{{ ($tickets->currentPage() - 1) * $tickets->perPage() + $index + 1 }}</td>
+                            <td>{{ $ticket->title }}</td>
+                            <td>{{ ucwords(str_replace('_', ' ', $ticket->status)) }}</td>
+                            <td>{{ ucwords($ticket->priority) }}</td>
+                            <td><a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-primary">View</a></td>
+                            <td><a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-secondary">Edit</a></td>
+                            <td>
+                                <!-- Trigger modal -->
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $ticket->id }}">
+                                    Delete
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="deleteModal{{ $ticket->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $ticket->id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel{{ $ticket->id }}">Delete Ticket</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete this ticket?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-            <div>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class= "page-item active" aria-current="page">
-                            <span class="page-link">1 <span class="visually-hidden">(current)</span></span>
-                        </li>
-                        {{-- <li class="page-item"><a class="page-link" href="#">1</a></li> --}}
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+            <div class="d-flex justify-content-center">
+                {{ $tickets->links() }}
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
