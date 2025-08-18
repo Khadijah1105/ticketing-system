@@ -9,8 +9,6 @@
 5. Choose an Instance Type - select t3.small.
 6. Key pair (Login) - select an existing key pair or create a new one.
 7. Network settings - tick all boxes.
-   ![This is an alt text.]()
-
 8. Configure storage - leave defaults.
 9. Launch instance.
 
@@ -77,13 +75,13 @@ sudo systemctl restart apache2
 
 ### Install additional PHP extensions
 - installs a bunch of core PHP extensions that *are not always bundled by default*
-
+- kena install pelbagai extension sebab tidak di install by default
 ```bash
 sudo apt install php8.3-{calendar,ctype,exif,ffi,fileinfo,ftp,gettext,iconv,pdo,phar,posix,shmop,sockets,sysvmsg,sysvsem,sysvshm,tokenizer}
 ```
 
 ### Install web php packages
-
+- kena install package yang sering digunakan dalam laravel
 ```bash
 sudo apt install apache2 libapache2-mod-php php-gd php-mbstring php-xml php-zip php-curl php-mysql
 ```
@@ -103,7 +101,7 @@ php -v
 
 ### Check Apache version
 - verifies the installed Apache version
-- turn on apache's rewrite engine
+- enable kan apache's rewrite engine supaya boleh modify/rewrite nano
 
 ```bash
 apache2 -v
@@ -289,7 +287,24 @@ sudo ufw allow 3306
 sudo ufw status
 ```
 
-## 10. Laravel Setup
+## 10. Check connection to database
+
+### Add inbound rules in your instance
+1. Open instance
+2. Click security -> security groups
+3. Click Edit inbound rule
+4. Add rule -> select Type: MySQL/Aurora and CIDR Blocks: 0.0.0.0/0
+5. Click on save rules
+
+### Add database in DBeaver
+1. Open DBeaver
+2. Create new connection
+3. Select MySQL
+4. Enter Server Host: your-ec2-public-dns
+5. Enter Username and Password based on MySQL Details you created before
+6. Click Finish 
+
+## 11. Laravel Setup
 
 ### Access the default document root
 - navigates to the default document root for Apache
@@ -309,7 +324,7 @@ sudo chown -R www-data:www-data .
 - clones your Laravel project from a Git repository
 
 ```bash
-git clone <your-repo-url>
+sudo git clone <your-repo-url>
 ```
 > Replace `<your-repo-url>` with the URL of your Git repository
 
@@ -321,14 +336,29 @@ cd <your-repo-name>
 ```
 > Replace `<your-repo-name>` with the name of your cloned repository
 
+- Change the owner of your Laravel project folder (root->user)
 ```bash
-sudo mv ticketing-system /var/www/html
 sudo chown -R $(whoami) /var/www/html/ticketing-system
 ```
 
 ```bash
 sudo nano .env
 cp .env.example .env
+sudo nano .env
+```
+- change APP_URL=http://`your-ec2-public-dns`
+- uncomment lines below
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+> Replace `your_database`, `your_username`, and `your_password` with your MySQL details
+
+```bash
 composer install
 ```
 
@@ -344,6 +374,24 @@ php artisan migrate
 
 ```bash
 cd /etc/apache2/sites-available
+sudo nano ticketing-system.conf
+```
+
+```dotenv
+<VirtualHost *:80>
+   ServerName <ip masing2>
+   DocumentRoot /var/www/html/ticketing-system/public
+
+   <Directory /var/www/html/ticketing-system>
+       AllowOverride All
+ Require all granted
+   </Directory>
+   ErrorLog ${APACHE_LOG_DIR}/error.log
+   CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+```bash
 sudo a2dissite 000-default.conf
 sudo systemctl reload apache2
 ```
@@ -359,50 +407,12 @@ cd /var/www/html/ticketing-system
 sudo nano .env
 ```
 
-### Add Git repository to safe directory
-- allows Git to operate on the repository without permission issues
-
-```bash
-git config --global --add safe.directory /var/www/html/<your-repo-name>
-```
-
-### Install PHP dependencies
-- installs the PHP dependencies defined in the `composer.json` file
-
-```bash
-composer install
-```
-
-### Copy `.env.example` to `.env`
-- creates a *copy* of the example environment file
-
-```bash
-sudo cp .env.example .env
-```
-
 ### Generate application key
 - generates a new application key for your Laravel project
 
 ```bash
 php artisan key:generate
 ```
-
-### Edit `.env`
-- configures the environment variables for your Laravel project
-
-```bash
-nano .env
-```
-
-```dotenv
-DB_CONNECTION=mysql
-DB_HOST=your_database_host
-DB_PORT=3306
-DB_DATABASE=your_database
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-```
-> Replace `your_database_host`, `your_database`, `your_username`, and `your_password` with your MySQL details
 
 ### Migrate the database
 - runs the database migrations
