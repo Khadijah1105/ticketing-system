@@ -287,11 +287,6 @@ sudo ufw status
 8. Click Test Connection
 9. Click Finish
 
-### Serve your IP
-1. Open web browser
-2. Serve `ip`
-> if it display ubuntu default page, then remote access is a success!
-
 ## 11. Laravel Setup
 
 ### Access the default document root
@@ -346,7 +341,7 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-### Ensure dependencies is ready
+### Ensure dependencies are ready
 - to make sure your project has all its dependencies ready, use
 ```bash
 composer install
@@ -403,12 +398,6 @@ sudo a2ensite <repo-name>.conf
 sudo systemctl reload apache2
 ```
 
-```bash
-cd /var/www/html/<repo-name>
-sudo nano .env
-```
-
-
-## 12. Serve your project
+## 12. Open your project
 1. Go to web browser
 2. Serve `ip/tickets`
