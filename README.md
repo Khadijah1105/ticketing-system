@@ -19,9 +19,9 @@
 ### Connect to your instance using SSH:
 
    ```bash
-   ssh -i /path/to/your-key.pem ubuntu@your-ec2-public-dns
+   ssh -i /path/to/your-key.pem ubuntu@your-public-ip
    ```
-> Replace `/path/to/your-key.pem` with the path to your key pair file and `your-ec2-public-dns` with the public DNS of your EC2 instance
+> Replace `/path/to/your-key.pem` with the path to your key pair file and `your-public-ip` with the public IPv4 address
 
 ### Update your package manager:
    
@@ -43,6 +43,7 @@ sudo add-apt-repository ppa:ondrej/php
     
 ```bash
 sudo apt install php8.3 php8.3-cli php8.3-{bz2,curl,mbstring,intl,xml,zip} unzip
+sudo apt-get install php8.3-mysql
 ```
 
 ### Install PHP 8.3 FPM (FastCGI Process Manager)
@@ -71,7 +72,7 @@ sudo apt install php8.3-{calendar,ctype,exif,ffi,fileinfo,ftp,gettext,iconv,pdo,
 ### Install web php packages
 - these packages are commonly required when developing and running Laravel applications.
 ```bash
-sudo apt install apache2 libapache2-mod-php php-gd php-mbstring php-xml php-zip php-curl php-mysql
+sudo apt install apache2 libapache2-mod-php8.3
 ```
 
 ### List installed PHP packages
@@ -218,12 +219,6 @@ GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES, RELOAD on
 ```
 > Replace `<your_name>` with the username you created earlier
 
-### Grant privileges to database
-```bash
-GRANT ALL PRIVILEGES ON *.* TO '<your_name>'@'%';
-```
-> Replace `<your_name>` with the username you created earlier
-
 ### Apply changes
 - applies the changes made to user privileges
 
@@ -314,21 +309,21 @@ sudo chown -R www-data:www-data .
 - clones your Laravel project from a Git repository
 
 ```bash
-sudo git clone <your-repo-url>
+sudo git clone <repo-url>
 ```
-> Replace `<your-repo-url>` with the URL of your Git repository
+> Replace `<repo-url>` with the URL of your Git repository
 
 ### Access your project directory
 - navigates into the project directory
 
 ```bash
-cd <your-repo-name>
+cd <repo-name>
 ```
-> Replace `<your-repo-name>` with the name of your cloned repository
+> Replace `<repo-name>` with the name of your cloned repository
 
 - Change the owner of your Laravel project folder (root->user)
 ```bash
-sudo chown -R $(whoami) /var/www/html/ticketing-system
+sudo chown -R $(whoami) /var/www/html/<repo-name>
 ```
 
 ### Copy and configure .env file
@@ -373,17 +368,17 @@ php artisan migrate
 ### Goes into Apache’s site configuration directory.
 ```bash
 cd /etc/apache2/sites-available
-sudo nano ticketing-system.conf
+sudo nano <repo-name>.conf
 ```
 - Copy all the line below and paste in ticketing-system.conf
 ```
 <VirtualHost *:80>
-   ServerName <ip masing2>
-   DocumentRoot /var/www/html/ticketing-system/public
+   ServerName <ip>
+   DocumentRoot /var/www/html/<repo-name>/public
 
-   <Directory /var/www/html/ticketing-system>
+   <Directory /var/www/html/<repo-name>>
        AllowOverride All
- Require all granted
+        Require all granted
    </Directory>
    ErrorLog ${APACHE_LOG_DIR}/error.log
    CustomLog ${APACHE_LOG_DIR}/access.log combined
@@ -398,13 +393,12 @@ sudo systemctl reload apache2
 
 ### Create and enable new site
 ```bash
-sudo nano ticketing-system.conf
-sudo a2ensite ticketing-system.conf
+sudo a2ensite <repo-name>.conf
 sudo systemctl reload apache2
 ```
 
 ```bash
-cd /var/www/html/ticketing-system
+cd /var/www/html/<repo-name>
 sudo nano .env
 ```
 
