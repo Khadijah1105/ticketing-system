@@ -353,6 +353,8 @@ composer install
 ```bash
 sudo chown -R www-data:www-data storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
+sudo chown -R www-data:www-data /var/www/html/<repo-name>/storage /var/www/html/<repo-name>/bootstrap/cache
+sudo chmod -R 775 /var/www/html/<repo-name>/storage /var/www/html/<repo-name>/bootstrap/cache
 ```
 
 ### Generate app key and create table
