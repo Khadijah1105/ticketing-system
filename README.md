@@ -280,7 +280,7 @@ sudo ufw status
 1. Open DBeaver
 2. Create new connection
 3. Select MySQL
-4. Enter Server Host: your-ec2-public-dns
+4. Enter Server Host: your-public-ip
 5. Enter Username and Password based on MySQL Details you created before
 6. Go to Driver Properties
 7. Change allowPublicKeyRetrieval to TRUE
