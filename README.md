@@ -8,13 +8,13 @@
 4. Choose an Amazon Machine Image (AMI) - select an Ubuntu Server 22.04 LTS (HVM), SSD Volume Type.
 5. Choose an Instance Type - select t3.small.
 6. Key pair (Login) - select an existing key pair or create a new one.
-7. Network settings - tick all boxes.
+7. Network settings - tick all boxes (Allow SSH, HTTPS, HTTP).
 8. Configure storage - leave defaults.
 9. Launch instance.
 
 ## 2. Connect to EC2 instance
 
-### Open WindowsPowershell.
+### Open Windows Powershell.
 
 ### Connect to your instance using SSH:
 
@@ -32,7 +32,6 @@
 ## 3. Adds PHP repository
 
 - adds a new software source (repository) to Ubuntu
-- `ppa:ondrej/php` is a Personal Package Archive (PPA) that provides newer PHP versions than the default Ubuntu repositories
 
 ```bash
 sudo add-apt-repository ppa:ondrej/php
@@ -59,35 +58,24 @@ sudo apt install php8.3-fpm
 
 ```bash
 sudo a2enconf php8.3-fpm
-```
-
-### Reload/Restart Apache to apply changes
-- reloads Apache configuration files *without fully stopping the server*
-
-```bash
 sudo systemctl reload apache2
-```
-
-- stops and starts Apache completely
-```bash
 sudo systemctl restart apache2
 ```
 
 ### Install additional PHP extensions
-- installs a bunch of core PHP extensions that *are not always bundled by default*
-- kena install pelbagai extension sebab tidak di install by default
+- installs a few PHP extensions that are not install by default (Laravel commonly require these)
 ```bash
 sudo apt install php8.3-{calendar,ctype,exif,ffi,fileinfo,ftp,gettext,iconv,pdo,phar,posix,shmop,sockets,sysvmsg,sysvsem,sysvshm,tokenizer}
 ```
 
 ### Install web php packages
-- kena install package yang sering digunakan dalam laravel
+- these packages are commonly required when developing and running Laravel applications.
 ```bash
 sudo apt install apache2 libapache2-mod-php php-gd php-mbstring php-xml php-zip php-curl php-mysql
 ```
 
 ### List installed PHP packages
-- lists all installed PHP packages and *saves the output* to a file named `packages.txt`
+- lists all installed PHP packages
 
 ```bash
 dpkg -l | grep php | tee packages.txt
@@ -101,10 +89,14 @@ php -v
 
 ### Check Apache version
 - verifies the installed Apache version
-- enable kan apache's rewrite engine supaya boleh modify/rewrite nano
 
 ```bash
 apache2 -v
+```
+
+### enable apache's rewrite engine 
+- to modify/rewrite nano
+```bash
 sudo a2enmod rewrite
 sudo systemctl restart apache2
 ```
@@ -149,7 +141,6 @@ git --version
 ```
 
 ### Install Git (if not installed)
-- installs Git, a version control system
 
 ```bash
 sudo apt install git -y
@@ -262,21 +253,12 @@ sudo ufw status
 sudo ufw enable
 ```
 
-### Allow port 22 / 80 / 3306
+### Allow port 22 & 80 & 3306
 - allows incoming traffic on ports 22 (SSH), 80 (HTTP), and 3306 (MySQL)
-- Do NOT open `port 3306` unless you really *need remote DB access*
-- allow `port 443` if you *need HTTPS access*
 
 ```bash
 sudo ufw allow 22
-```
-
-```bash
 sudo ufw allow 80
-```
-
-```bash
-
 sudo ufw allow 3306
 ```
 
@@ -287,22 +269,30 @@ sudo ufw allow 3306
 sudo ufw status
 ```
 
-## 10. Check connection to database
+## 10. Connect to database
 
 ### Add inbound rules in your instance
 1. Open instance
 2. Click security -> security groups
 3. Click Edit inbound rule
-4. Add rule -> select Type: MySQL/Aurora and CIDR Blocks: 0.0.0.0/0
+4. Add rule -> select Type: MySQL/Aurora and CIDR Blocks: 0.0.0.0/0 (for open access)
 5. Click on save rules
 
-### Add database in DBeaver
+### Add MySQL connection in DBeaver
 1. Open DBeaver
 2. Create new connection
 3. Select MySQL
 4. Enter Server Host: your-ec2-public-dns
 5. Enter Username and Password based on MySQL Details you created before
-6. Click Finish 
+6. Go to Driver Properties
+7. Change allowPublicKeyRetrieval to TRUE
+8. Click Test Connection
+9. Click Finish
+
+### Serve your IP
+1. Open web browser
+2. Serve `ip`
+> if it display ubuntu default page, then remote access is a success!
 
 ## 11. Laravel Setup
 
@@ -341,14 +331,15 @@ cd <your-repo-name>
 sudo chown -R $(whoami) /var/www/html/ticketing-system
 ```
 
+### Copy and configure .env file
 ```bash
 sudo nano .env
 cp .env.example .env
 sudo nano .env
 ```
 - change APP_URL=http://`your-ec2-public-dns`
-- uncomment lines below
-```dotenv
+- uncomment lines below and replace `your_database`, `your_username`, and `your_password` with your MySQL details
+```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -356,28 +347,36 @@ DB_DATABASE=your_database
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
-> Replace `your_database`, `your_username`, and `your_password` with your MySQL details
 
+### Ensure dependencies is ready
+- to make sure your project has all its dependencies ready, use
 ```bash
 composer install
 ```
 
+### Ownership and permission change
 ```bash
 sudo chown -R www-data:www-data storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
 ```
 
+### Generate app key and create table
+- generates a new application key for your Laravel project
+- builds your database tables according to Laravel’s migration files.
 ```bash
 php artisan key:generate
 php artisan migrate
 ```
 
+## 11. Configure Apache for Laravel
+
+### Goes into Apache’s site configuration directory.
 ```bash
 cd /etc/apache2/sites-available
 sudo nano ticketing-system.conf
 ```
-
-```dotenv
+- Copy all the line below and paste in ticketing-system.conf
+```
 <VirtualHost *:80>
    ServerName <ip masing2>
    DocumentRoot /var/www/html/ticketing-system/public
@@ -391,11 +390,13 @@ sudo nano ticketing-system.conf
 </VirtualHost>
 ```
 
+### Disable default site
 ```bash
 sudo a2dissite 000-default.conf
 sudo systemctl reload apache2
 ```
 
+### Create and enable new site
 ```bash
 sudo nano ticketing-system.conf
 sudo a2ensite ticketing-system.conf
@@ -407,18 +408,6 @@ cd /var/www/html/ticketing-system
 sudo nano .env
 ```
 
-### Generate application key
-- generates a new application key for your Laravel project
-
-```bash
-php artisan key:generate
-```
-
-### Migrate the database
-- runs the database migrations
-
-```bash
-php artisan migrate
-```
-
-## 11. Configure Apache for Laravel
+## 12. Serve your project
+1. Go to web browser
+2. Serve `ip/tickets`
