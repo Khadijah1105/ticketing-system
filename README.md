@@ -12,6 +12,7 @@
 8. Configure storage - leave defaults.
 9. Launch instance.
 
+
 ## 2. Connect to EC2 instance
 
 ### Open Windows Powershell.
@@ -29,13 +30,16 @@
    sudo apt update
    ```
 
+
 ## 3. Adds PHP repository
 
-- adds a new software source (repository) to Ubuntu
+- adds a new software source (repository) to Ubuntu.
+- unlocks more PHP versions for you to install via apt.
 
 ```bash
 sudo add-apt-repository ppa:ondrej/php
 ```
+
 
 ## 4. Install PHP and required extensions
 
@@ -47,8 +51,7 @@ sudo apt-get install php8.3-mysql
 ```
 
 ### Install PHP 8.3 FPM (FastCGI Process Manager)
-- more efficient, and scalable because it runs PHP as *separate worker processes* instead of inside Apache
-- a service that lets your web server (Apache/Nginx) *run PHP apps more efficiently*
+- a service that lets your web server (Apache/Nginx) *run PHP apps seperately but efficiently*
     
 ```bash
 sudo apt install php8.3-fpm
@@ -96,16 +99,16 @@ apache2 -v
 ```
 
 ### enable apache's rewrite engine 
-- to modify/rewrite nano
+- to prevent 404 Not Found
 ```bash
 sudo a2enmod rewrite
 sudo systemctl restart apache2
 ```
 
+
 ## 5. Install Composer
 
 ### Download and install Composer
-- installs Composer, a dependency manager for PHP
 
 ```bash
 curl -sS https://getcomposer.org/installer | php
@@ -126,7 +129,6 @@ sudo chmod +x /usr/local/bin/composer
 ```
 
 ### Check Composer version
-- verifies the installed Composer version
 
 ```bash
 composer -v
@@ -135,7 +137,6 @@ composer -v
 ## 6. Install Git
 
 ### Check Git version
-- verifies the installed Git version
 
 ```bash
 git --version
@@ -147,17 +148,16 @@ git --version
 sudo apt install git -y
 ```
 
+
 ## 7. Install MySQL
 
 ### Install MySQL Server
-- installs the MySQL server package
 
 ```bash
 sudo apt install mysql-server -y
 ```
 
 ### Check MySQL version
-- verifies the installed MySQL version
 
 ```bash
 mysql --version
@@ -170,8 +170,8 @@ mysql --version
 sudo systemctl start mysql
 ```
 
-### Enable MySQL autostart
-- enables MySQL to *start on boot*
+### Enable MySQL 
+- enables MySQL service everytime server run
 
 ```bash
 sudo systemctl enable mysql
@@ -184,6 +184,7 @@ sudo systemctl enable mysql
 sudo systemctl status mysql
 ```
 
+
 ## 8. Configure MySQL
 
 ### Allowing remote connections
@@ -192,13 +193,14 @@ sudo systemctl status mysql
 sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
 ```
 > Change bind-address to 0.0.0.0
-> Restarts MySQL to apply changes
+
+- Restarts MySQL to apply changes
 ```bash
 sudo systemctl restart mysql
 ```
 
 ### Log into MySQL
-- log into the MySQL server as the root user *to manage databases and users*
+- log into the MySQL server as the root user
 
 ```bash
 sudo mysql -u root -p
@@ -232,6 +234,7 @@ FLUSH PRIVILEGES;
 exit
 ```
 
+
 ## 9. Firewall Configuration
 
 ### Check UFW status
@@ -242,7 +245,6 @@ sudo ufw status
 ```
 
 ### Enable UFW
-- enables UFW to *start on boot*
 
 ```bash
 sudo ufw enable
@@ -264,13 +266,14 @@ sudo ufw allow 3306
 sudo ufw status
 ```
 
+
 ## 10. Connect to database
 
 ### Add inbound rules in your instance
 1. Open instance
 2. Click security -> security groups
 3. Click Edit inbound rule
-4. Add rule -> select Type: MySQL/Aurora and CIDR Blocks: 0.0.0.0/0 (for open access)
+4. Add rule -> select Type: MySQL/Aurora and Source: 0.0.0.0/0 (for open access)
 5. Click on save rules
 
 ### Add MySQL connection in DBeaver
@@ -332,7 +335,7 @@ sudo nano .env
 cp .env.example .env
 sudo nano .env
 ```
-- change APP_URL=http://`your-ec2-public-dns`
+- change APP_URL=http://`your-public-ip`
 - uncomment lines below and replace `your_database`, `your_username`, and `your_password` with your MySQL details
 ```
 DB_CONNECTION=mysql
@@ -364,6 +367,7 @@ sudo chmod -R 775 /var/www/html/<repo-name>/storage /var/www/html/<repo-name>/bo
 php artisan key:generate
 php artisan migrate
 ```
+
 
 ## 11. Configure Apache for Laravel
 
@@ -403,6 +407,7 @@ sudo systemctl reload apache2
 cd /var/www/html/<repo-name>
 sudo nano .env
 ```
+
 
 ## 12. Serve your project
 1. Go to web browser
